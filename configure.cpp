@@ -105,12 +105,12 @@ void Configure( PicamHandle camera )
     PrintError( error );
 
     // - set exposure time (in millseconds)
-    std::cout << "Set 200 ms exposure time: ";
+    std::cout << "Set 210 ms exposure time: ";
     error = 
         Picam_SetParameterFloatingPointValue(
             camera,
             PicamParameter_ExposureTime,
-            200.0 );
+            210.0 );
     PrintError( error );
     
     // - set ADC rate (in megahertz)
