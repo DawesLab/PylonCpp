@@ -1,7 +1,0 @@
-cmake_minimum_required(VERSION 2.8)
-project( SnapImage )
-find_package( OpenCV REQUIRED )
-add_executable( SnapImage SnapImage.cpp )
-target_link_libraries( SnapImage ${OpenCV_LIBS} )
-target_link_libraries( SnapImage picam )
-include_directories( "/opt/PrincetonInstruments/picam/includes" )
