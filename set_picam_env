@@ -1,0 +1,48 @@
+#!/bin/sh
+
+USR_LOCAL_LIB=/usr/local/lib64
+export PICAM_ROOT=/opt/PrincetonInstruments/picam
+
+#pleora stuff
+export PUREGEV_ROOT=/opt/pleora/ebus_sdk
+export GENICAM_ROOT=$PUREGEV_ROOT/lib/genicam
+export GENICAM_ROOT_V2_1=$GENICAM_ROOT
+export QT_LIB_DIR=$PUREGEV_ROOT/lib/qt/lib
+export GENICAM_LOG_CONFIG=$GENICAM_ROOT/log/config/DefaultLogging.properties
+export GENICAM_LOG_CONFIG_V2_1=$GENICAM_LOG_CONFIG
+export GENICAM_CACHE_V2_1=/home/dawes/.config/Pleora/genicam_cache_v2_1
+export GENICAM_CACHE=$GENICAM_CACHE_V2_1
+mkdir -p $GENICAM_CACHE
+
+GENICAM_LIB_DIR=$GENICAM_ROOT/bin/Linux64_x64
+
+if ! echo ${LD_LIBRARY_PATH} | /bin/grep -q ${PUREGEV_ROOT}/lib; then
+  if [ "$LD_LIBRARY_PATH" = "" ]; then
+    LD_LIBRARY_PATH=${PUREGEV_ROOT}/lib
+  else
+    LD_LIBRARY_PATH=${PUREGEV_ROOT}/lib:${LD_LIBRARY_PATH}
+  fi
+fi
+
+if ! echo ${LD_LIBRARY_PATH} | /bin/grep -q ${GENICAM_LIB_DIR}; then
+  LD_LIBRARY_PATH=${GENICAM_LIB_DIR}:${LD_LIBRARY_PATH}
+fi
+
+if ! echo ${LD_LIBRARY_PATH} | /bin/grep -q ${QT_LIB_DIR}; then
+  LD_LIBRARY_PATH=${QT_LIB_DIR}:${LD_LIBRARY_PATH}
+fi
+#add /usr/local/lib64 to LD_LIBRARY_PATH
+if ! echo ${LD_LIBRARY_PATH} | /bin/grep -q ${USR_LOCAL_LIB}; then
+  LD_LIBRARY_PATH=${USR_LOCAL_LIB}:${LD_LIBRARY_PATH}
+fi
+
+export LD_LIBRARY_PATH
+
+if ! echo ${PATH} | /bin/grep -q ${PUREGEV_ROOT}/bin; then
+  PATH=${PUREGEV_ROOT}/bin:${PATH}
+fi
+
+export PATH
+
+unset GENICAM_LIB_DIR
+
