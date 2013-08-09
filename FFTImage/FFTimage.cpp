@@ -102,7 +102,7 @@ void ConfigureCamera (PicamHandle camera)
     Picam_DestroyParameters( failed_parameters );
 }
 
-int main()
+int main() // Add argument sensitivity here
 {
     Picam_InitializeLibrary();
 
@@ -213,7 +213,18 @@ int main()
 	    imshow("Input Image"       , image   );    // Show the result
 	    imshow("spectrum magnitude", magI);
 	    waitKey();
+	    if(i == 4){
+	    	FileStorage fs("test.yml", FileStorage::WRITE); // This is an easy way, but uses space!
+
+	    	fs << "frame number" << i;
+	    	fs << "image" << image; // TODO save middle 5 rows
+	    	fs << "fft-mag" << magI; // save both real and imag parts of FFT
+
+	    	fs.release();
+	    	imwrite("datafile.tif", image);
+	    }
 	}
+
 	Picam_CloseCamera( camera );
     Picam_UninitializeLibrary();
     //TODO add file output of complex numbers from one element of FFT result. (command line flag)
