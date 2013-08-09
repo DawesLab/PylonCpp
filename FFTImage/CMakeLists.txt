@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 2.8)
+project( FFTimage )
+find_package( OpenCV REQUIRED )
+add_executable( FFTimage FFTimage.cpp )
+target_link_libraries( FFTimage ${OpenCV_LIBS} )
+target_link_libraries( FFTimage picam )
+include_directories( "/opt/PrincetonInstruments/picam/includes" )

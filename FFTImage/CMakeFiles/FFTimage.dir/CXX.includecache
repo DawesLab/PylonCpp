@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/photon/code/PylonCpp/FFTImage/FFTimage.cpp
+stdio.h
+/home/photon/code/PylonCpp/FFTImage/stdio.h
+picam.h
+/home/photon/code/PylonCpp/FFTImage/picam.h
+opencv2/opencv.hpp
+-
+opencv2/core/core.hpp
+/home/photon/code/PylonCpp/FFTImage/opencv2/core/core.hpp
+opencv2/imgproc/imgproc.hpp
+/home/photon/code/PylonCpp/FFTImage/opencv2/imgproc/imgproc.hpp
+opencv2/highgui/highgui.hpp
+/home/photon/code/PylonCpp/FFTImage/opencv2/highgui/highgui.hpp
+
+/opt/PrincetonInstruments/picam/includes/picam.h
+pil_platform.h
+/opt/PrincetonInstruments/picam/includes/pil_platform.h
+
+/opt/PrincetonInstruments/picam/includes/pil_platform.h
+
