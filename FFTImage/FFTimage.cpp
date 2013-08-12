@@ -104,6 +104,7 @@ void ConfigureCamera (PicamHandle camera)
 
 int main() // Add argument sensitivity here
 {
+    std::cout << "Initializing PIcam library\n";
     Picam_InitializeLibrary();
 
     // - open the first camera if any or create a demo camera
@@ -114,6 +115,7 @@ int main() // Add argument sensitivity here
     PicamAcquisitionErrorsMask errors;
 
     piint readoutstride = 0;
+    std::cout << "Opening camera...\n";
 
     if( Picam_OpenFirstCamera( &camera ) == PicamError_None )
         Picam_GetCameraID( camera, &id );
@@ -127,6 +129,8 @@ int main() // Add argument sensitivity here
     printf( " (SN:%s) [%s]\n", id.serial_number, id.sensor_name );
     Picam_DestroyString( string );
 
+    std::cout << "Configuring camera...\n";
+    
     ConfigureCamera( camera );
 
     Picam_GetParameterIntegerValue( camera, PicamParameter_ReadoutStride, &readoutstride );
@@ -134,7 +138,7 @@ int main() // Add argument sensitivity here
     //collect one frame
     printf( "\n\n" );
     
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 2; i++)
     {
 
 
@@ -173,55 +177,45 @@ int main() // Add argument sensitivity here
 	    // compute the magnitude and switch to logarithmic scale
 	    // => log(1 + sqrt(Re(DFT(I))^2 + Im(DFT(I))^2))
 	    split(complexI, planes);                   // planes[0] = Re(DFT(I), planes[1] = Im(DFT(I))
-	    magnitude(planes[0], planes[1], planes[0]);// planes[0] = magnitude
-	    Mat magI = planes[0];
+	    //magnitude(planes[0], planes[1], planes[0]);// planes[0] = magnitude
+	    Mat realI = planes[0];
+	    Mat imagI = planes[1];
 
-	    magI += Scalar::all(1);                    // switch to logarithmic scale
-	    log(magI, magI);
+	    //magI += Scalar::all(1);                    // switch to logarithmic scale
+	    //log(magI, magI);
 
 	    // crop the spectrum, if it has an odd number of rows or columns
-	    magI = magI(Rect(0, 0, magI.cols & -2, magI.rows & -2));
+	    realI = realI(Rect(0, 0, realI.cols & -2, realI.rows & -2));
+	    imagI = imagI(Rect(0, 0, imagI.cols & -2, imagI.rows & -2));
 
-	    // rearrange the quadrants of Fourier image  so that the origin is at the image center
-	    //int cx = magI.cols/2;
-	    //int cy = magI.rows/2;
+	    // rearrange the halves of Fourier image  so that the origin is at the image center
 
-	    //Mat q0(magI, Rect(0, 0, cx, cy));   // Top-Left - Create a ROI per quadrant
-	    //Mat q1(magI, Rect(cx, 0, cx, cy));  // Top-Right
-	    //Mat q2(magI, Rect(0, cy, cx, cy));  // Bottom-Left
-	    //Mat q3(magI, Rect(cx, cy, cx, cy)); // Bottom-Right
+	    //Mat tmp;                           // swap quadrants (Top-Left with Bottom-Right)
 
-	    Mat tmp;                           // swap quadrants (Top-Left with Bottom-Right)
-	    //q0.copyTo(tmp);
-	    //q3.copyTo(q0);
-	    //tmp.copyTo(q3);
+	    //Mat leftHalf(magI, Rect(0, 0, magI.cols/2, magI.rows));
+	    //Mat rightHalf(magI, Rect(magI.cols/2, 0, magI.cols/2, magI.rows));
 
-	    //q1.copyTo(tmp);                    // swap quadrant (Top-Right with Bottom-Left)
-	    //q2.copyTo(q1);
-	    //tmp.copyTo(q2);
+	    //leftHalf.copyTo(tmp);
+	    //rightHalf.copyTo(leftHalf);
+	    //tmp.copyTo(rightHalf);
 
-	    Mat leftHalf(magI, Rect(0, 0, magI.cols/2, magI.rows));
-	    Mat rightHalf(magI, Rect(magI.cols/2, 0, magI.cols/2, magI.rows));
-
-	    leftHalf.copyTo(tmp);
-	    rightHalf.copyTo(leftHalf);
-	    tmp.copyTo(rightHalf);
-
-	    normalize(magI, magI, 0, 1, CV_MINMAX); // Transform the matrix with float values into a
+	    //normalize(imagI, imagI, 0, 1, CV_MINMAX); // Transform the matrix with float values into a
+	                                            // viewable image form (float between values 0 and 1).
+	    //normalize(realI, realI, 0, 1, CV_MINMAX); // Transform the matrix with float values into a
 	                                            // viewable image form (float between values 0 and 1).
 
 	    imshow("Input Image"       , image   );    // Show the result
-	    imshow("spectrum magnitude", magI);
+	    //imshow("spectrum (real)", realI);
 	    waitKey();
-	    if(i == 4){
+	    if(i == 1){
 	    	FileStorage fs("test.yml", FileStorage::WRITE); // This is an easy way, but uses space!
 
 	    	fs << "frame number" << i;
-	    	fs << "image" << image; // TODO save middle 5 rows
-	    	fs << "fft-mag" << magI; // save both real and imag parts of FFT
-
+	    	fs << "image" << image.rowRange(Range(195,205)); // save middle 10 rows
+	    	fs << "fft-real" << realI.rowRange(Range(195,205)); // save both real and imag parts of FFT
+	    	fs << "fft-imag" << imagI.rowRange(Range(195,205)); 
 	    	fs.release();
-	    	imwrite("datafile.tif", image);
+	    	imwrite("datafile.png", image.rowRange(Range(195,205)));
 	    }
 	}
 
