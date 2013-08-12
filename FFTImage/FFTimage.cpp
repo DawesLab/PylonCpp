@@ -4,7 +4,6 @@
 //1 frame of data each time the function is called, looping
 //through 5 times.
 
-// TODO: add storage of FFT (half array) of middle 5 rows from each shot
 // TODO: add command line flags to specify saving full FFT or an ROI
 
 #define NUM_FRAMES  5
@@ -12,12 +11,14 @@
 
 #include "stdio.h"
 #include "picam.h"
+#include <boost/program_options.hpp>
 #include <opencv2/opencv.hpp>
 #include "opencv2/core/core.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
 using namespace cv;
+namespace po = boost::program_options;
 
 //TODO: put these Print functions into another file
 
@@ -102,8 +103,32 @@ void ConfigureCamera (PicamHandle camera)
     Picam_DestroyParameters( failed_parameters );
 }
 
-int main() // Add argument sensitivity here
+int main(int ac, char* av[])
 {
+
+	// Declare the supported options.
+	po::options_description desc("Allowed options");
+	desc.add_options()
+	    ("help", "produce help message")
+	    ("compression", po::value<int>(), "set compression level")
+	;
+
+	po::variables_map vm;
+	po::store(po::parse_command_line(ac, av, desc), vm);
+	po::notify(vm);    
+
+	if (vm.count("help")) {
+	    std::cout << desc << "\n";
+	    return 1;
+	}
+
+	if (vm.count("compression")) {
+	    std::cout << "Compression level was set to " 
+	 << vm["compression"].as<int>() << ".\n";
+	} else {
+	    std::cout << "Compression level was not set.\n";
+	}
+
     std::cout << "Initializing PIcam library\n";
     Picam_InitializeLibrary();
 
