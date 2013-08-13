@@ -20,7 +20,7 @@
 using namespace cv;
 namespace po = boost::program_options;
 
-//TODO: put these Print functions into another file
+//TODO: put these Print functions into another file?
 
 void PrintData( pibyte* buf, piint numframes, piint framelength )
 {
@@ -65,7 +65,16 @@ void ConfigureCamera (PicamHandle camera)
                 camera,
                 PicamParameter_AdcSpeed,
                 4.0 );
-    PrintError( error );    
+    PrintError( error );
+
+    std::cout << "Set exposure to triggered: ";
+
+    error = Picam_SetParameterIntegerValue(
+    			camera,
+    			PicamParameter_TriggerResponse,
+    			TriggerResponse ); // TODO define Trigger Response based on kinetics example
+    PrintError( error );
+
     
     pibln committed;
     Picam_AreParametersCommitted( camera, &committed );
@@ -110,7 +119,7 @@ int main(int ac, char* av[])
 	po::options_description desc("Allowed options");
 	desc.add_options()
 	    ("help", "produce help message")
-	    ("compression", po::value<int>(), "set compression level")
+	    ("full", "output the full frame of data")
 	;
 
 	po::variables_map vm;
@@ -122,11 +131,12 @@ int main(int ac, char* av[])
 	    return 1;
 	}
 
-	if (vm.count("compression")) {
-	    std::cout << "Compression level was set to " 
-	 << vm["compression"].as<int>() << ".\n";
+	bool fullOutput = false;
+	if (vm.count("full")) {
+	    std::cout << "Output set to full.\n ";
+		fullOutput = true;
 	} else {
-	    std::cout << "Compression level was not set.\n";
+	    std::cout << "Output set to ROI.\n";
 	}
 
     std::cout << "Initializing PIcam library\n";
