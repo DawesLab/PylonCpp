@@ -69,10 +69,19 @@ void ConfigureCamera (PicamHandle camera)
 
     std::cout << "Set exposure to triggered: ";
 
+    PicamTriggerResponse TriggerResponse =  PicamTriggerResponse_ExposeDuringTriggerPulse; 
+    PicamTriggerDetermination TriggerDetermination = PicamTriggerDetermination_PositivePolarity;
+
     error = Picam_SetParameterIntegerValue(
     			camera,
     			PicamParameter_TriggerResponse,
-    			TriggerResponse ); // TODO define Trigger Response based on kinetics example
+    			TriggerResponse );
+    PrintError( error );
+
+    error = Picam_SetParameterIntegerValue(
+    			camera,
+    			PicamParameter_TriggerDetermination,
+    			TriggerDetermination );
     PrintError( error );
 
     
@@ -114,12 +123,11 @@ void ConfigureCamera (PicamHandle camera)
 
 int main(int ac, char* av[])
 {
-
 	// Declare the supported options.
 	po::options_description desc("Allowed options");
 	desc.add_options()
 	    ("help", "produce help message")
-	    ("full", "output the full frame of data")
+	    ("verbose", "explain each step")
 	;
 
 	po::variables_map vm;
@@ -131,15 +139,20 @@ int main(int ac, char* av[])
 	    return 1;
 	}
 
-	bool fullOutput = false;
-	if (vm.count("full")) {
-	    std::cout << "Output set to full.\n ";
-		fullOutput = true;
+
+	bool verboseOutput = false;
+	if (vm.count("verbose")) {
+	    std::cout << "Verbose output.\n";
+		verboseOutput = true;
 	} else {
-	    std::cout << "Output set to ROI.\n";
+	    std::cout << "Quiet output.\n";
 	}
 
-    std::cout << "Initializing PIcam library\n";
+	// Take input commands
+
+
+    if (verboseOutput) std::cout << "Initializing PIcam library\n";
+    
     Picam_InitializeLibrary();
 
     // - open the first camera if any or create a demo camera
@@ -173,11 +186,21 @@ int main(int ac, char* av[])
     //collect one frame
     printf( "\n\n" );
     
-    for (int i = 0; i < 2; i++)
+    int numShots = 10;
+
+    std::cout << "Enter the number of shots to collect: ";
+    std::cin >> numShots;
+
+    bool fullOutput = false;
+	std::cout << "Enter the output type (1 -> Full, 0-> ROI): ";
+	std::cin >> fullOutput;
+
+
+    for (int i = 0; i < numShots; i++)
     {
 
 
-	    printf( "Collecting 1 frame\n\n" );
+	    std::cout << "Collecting 1 frame\n\n";
 	    if( Picam_Acquire( camera, 1, NO_TIMEOUT, &data, &errors ) )
 	        printf( "Error: Camera only collected %d frames\n", (piint)data.readout_count );
 	    else
@@ -239,9 +262,9 @@ int main(int ac, char* av[])
 	    //normalize(realI, realI, 0, 1, CV_MINMAX); // Transform the matrix with float values into a
 	                                            // viewable image form (float between values 0 and 1).
 
-	    imshow("Input Image"       , image   );    // Show the result
+	    //imshow("Input Image"       , image   );    // Show the result
 	    //imshow("spectrum (real)", realI);
-	    waitKey();
+	    //waitKey();
 	    if(i == 1){
 	    	FileStorage fs("test.yml", FileStorage::WRITE); // This is an easy way, but uses space!
 
