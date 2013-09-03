@@ -56,9 +56,10 @@ void PrintError (PicamError error)
     }
 }
 
-void ConfigureCamera (PicamHandle camera)
+void ConfigureCamera (PicamHandle camera, bool verboseOutput)
 {
-    std::cout << "Set ADC rate to 4 MHz: ";
+    if (verboseOutput)
+    	std::cout << "Set ADC rate to 4 MHz: ";
     
     PicamError error;
     error = Picam_SetParameterFloatingPointValue(
@@ -67,7 +68,8 @@ void ConfigureCamera (PicamHandle camera)
                 4.0 );
     PrintError( error );
 
-    std::cout << "Set exposure to triggered: ";
+    if (verboseOutput)
+    	std::cout << "Set exposure to triggered: ";
 
     PicamTriggerResponse TriggerResponse =  PicamTriggerResponse_ExposeDuringTriggerPulse; 
     PicamTriggerDetermination TriggerDetermination = PicamTriggerDetermination_PositivePolarity;
@@ -88,12 +90,15 @@ void ConfigureCamera (PicamHandle camera)
     pibln committed;
     Picam_AreParametersCommitted( camera, &committed );
     if( committed )
-        std::cout << "Parameters have not changed" << std::endl;
+        if (verboseOutput)
+    		std::cout << "Parameters have not changed" << std::endl;
     else
-        std::cout << "Parameters have been modified" << std::endl;
+        if (verboseOutput)
+    		std::cout << "Parameters have been modified" << std::endl;
 
     // apply changes to hardware
-    std::cout << "Commit to hardware: ";
+    if (verboseOutput)
+    	std::cout << "Commit to hardware: ";
     const PicamParameter* failed_parameters;
     piint failed_parameters_count;
     error = 
@@ -103,10 +108,12 @@ void ConfigureCamera (PicamHandle camera)
             &failed_parameters_count );
     PrintError( error );
 
-    std::cout << "Testing for invalid params\n";
+    if (verboseOutput)
+    	std::cout << "Testing for invalid params\n";
     if( failed_parameters_count > 0 )
     {
-        std::cout << "The following params are invalid:" << std::endl;
+        if (verboseOutput)
+    		std::cout << "The following params are invalid:" << std::endl;
         for( piint i = 0; i < failed_parameters_count; ++i )
         {
             std::cout << "    ";
@@ -116,7 +123,8 @@ void ConfigureCamera (PicamHandle camera)
             std::cout << std::endl;
         }
     }
-    std::cout << "Cleaning up resources\n";
+    if (verboseOutput)
+    	std::cout << "Cleaning up resources\n";
 
     Picam_DestroyParameters( failed_parameters );
 }
@@ -148,10 +156,8 @@ int main(int ac, char* av[])
 	    std::cout << "Quiet output.\n";
 	}
 
-	// Take input commands
-
-
-    if (verboseOutput) std::cout << "Initializing PIcam library\n";
+    if (verboseOutput) 
+    	std::cout << "Initializing PIcam library\n";
     
     Picam_InitializeLibrary();
 
@@ -163,7 +169,8 @@ int main(int ac, char* av[])
     PicamAcquisitionErrorsMask errors;
 
     piint readoutstride = 0;
-    std::cout << "Opening camera...\n";
+    if (verboseOutput) 
+    	std::cout << "Opening camera...\n";
 
     if( Picam_OpenFirstCamera( &camera ) == PicamError_None )
         Picam_GetCameraID( camera, &id );
@@ -177,15 +184,17 @@ int main(int ac, char* av[])
     printf( " (SN:%s) [%s]\n", id.serial_number, id.sensor_name );
     Picam_DestroyString( string );
 
-    std::cout << "Configuring camera...\n";
+    if (verboseOutput)
+    	std::cout << "Configuring camera...\n";
     
-    ConfigureCamera( camera );
+    ConfigureCamera( camera, verboseOutput );
 
     Picam_GetParameterIntegerValue( camera, PicamParameter_ReadoutStride, &readoutstride );
 
-    //collect one frame
     printf( "\n\n" );
     
+
+    // Take input commands
     int numShots = 10;
 
     std::cout << "Enter the number of shots to collect: ";
@@ -199,8 +208,7 @@ int main(int ac, char* av[])
     for (int i = 0; i < numShots; i++)
     {
 
-
-	    std::cout << "Collecting 1 frame\n\n";
+	    if (verboseOutput) std::cout << "Collecting 1 frame\n\n";
 	    if( Picam_Acquire( camera, 1, NO_TIMEOUT, &data, &errors ) )
 	        printf( "Error: Camera only collected %d frames\n", (piint)data.readout_count );
 	    else
@@ -210,9 +218,7 @@ int main(int ac, char* av[])
 	    
 	    Mat image = Mat(400,1340, CV_16U, data.initial_readout).clone();
 	    
-	    
-
-	    printf( "Display data\n" );
+	    if (verboseOutput) std::cout << "Display data\n" ;
 
 	    //namedWindow( "DisplayImage", CV_WINDOW_AUTOSIZE );
 	    //imshow( "DisplayImage", image );
