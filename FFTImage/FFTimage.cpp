@@ -268,9 +268,9 @@ int main(int ac, char* av[])
 	    //normalize(realI, realI, 0, 1, CV_MINMAX); // Transform the matrix with float values into a
 	                                            // viewable image form (float between values 0 and 1).
 
-	    //imshow("Input Image"       , image   );    // Show the result
+	    imshow("Input Image"       , image   );    // Show the result
 	    //imshow("spectrum (real)", realI);
-	    //waitKey();
+	    if( waitKey(30) >= 0 ) break; // wait 30 ms for key interrupt
 	    if(i == 1){
 	    	FileStorage fs("test.yml", FileStorage::WRITE); // This is an easy way, but uses space!
 
