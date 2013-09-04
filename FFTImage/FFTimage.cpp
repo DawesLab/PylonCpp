@@ -56,6 +56,23 @@ void PrintError (PicamError error)
     }
 }
 
+Mat CollectShot(bool verboseOutput, PicamHandle camera, PicamAvailableData data, PicamAcquisitionErrorsMask errors)
+{
+	if (verboseOutput) std::cout << "Collecting 1 frame\n\n";
+    if( Picam_Acquire( camera, 1, NO_TIMEOUT, &data, &errors ) )
+        printf( "Error: Camera only collected %d frames\n", (piint)data.readout_count );
+    else
+    {
+    	std::cout << "One frame collected\n";
+        //PrintData( (pibyte*)data.initial_readout, 1, readoutstride );
+    }
+    
+    Mat image = Mat(400,1340, CV_16U, data.initial_readout).clone();
+
+    return image;
+}
+
+
 void ConfigureCamera (PicamHandle camera, bool verboseOutput)
 {
     if (verboseOutput)
@@ -72,13 +89,16 @@ void ConfigureCamera (PicamHandle camera, bool verboseOutput)
     	std::cout << "Set exposure to triggered: ";
 
     PicamTriggerResponse TriggerResponse =  PicamTriggerResponse_ExposeDuringTriggerPulse; 
-    PicamTriggerDetermination TriggerDetermination = PicamTriggerDetermination_PositivePolarity;
+    PicamTriggerDetermination TriggerDetermination = PicamTriggerDetermination_RisingEdge;
 
     error = Picam_SetParameterIntegerValue(
     			camera,
     			PicamParameter_TriggerResponse,
     			TriggerResponse );
     PrintError( error );
+
+    if (verboseOutput)
+    	std::cout << "Set trigger determination: ";
 
     error = Picam_SetParameterIntegerValue(
     			camera,
@@ -207,27 +227,9 @@ int main(int ac, char* av[])
 
     for (int i = 0; i < numShots; i++)
     {
+    	Mat image = CollectShot(verboseOutput, camera, data, errors);
 
-	    if (verboseOutput) std::cout << "Collecting 1 frame\n\n";
-	    if( Picam_Acquire( camera, 1, NO_TIMEOUT, &data, &errors ) )
-	        printf( "Error: Camera only collected %d frames\n", (piint)data.readout_count );
-	    else
-	    {
-	        PrintData( (pibyte*)data.initial_readout, 1, readoutstride );
-	    }
-	    
-	    Mat image = Mat(400,1340, CV_16U, data.initial_readout).clone();
-	    
-	    if (verboseOutput) std::cout << "Display data\n" ;
-
-	    //namedWindow( "DisplayImage", CV_WINDOW_AUTOSIZE );
-	    //imshow( "DisplayImage", image );
-	    
-	    //waitKey(0);
-
-	    //The following was copied (with substitution of "image" for "I") from http://docs.opencv.org/doc/tutorials/core/discrete_fourier_transform/discrete_fourier_transform.html
-
-	    Mat padded;
+    	Mat padded;
 	    int m = getOptimalDFTSize( image.rows );
 	    int n = getOptimalDFTSize( image.cols );
 	    copyMakeBorder(image, padded, 0, m - image.rows, 0, n - image.cols, BORDER_CONSTANT, Scalar::all(0));
@@ -252,21 +254,7 @@ int main(int ac, char* av[])
 	    realI = realI(Rect(0, 0, realI.cols & -2, realI.rows & -2));
 	    imagI = imagI(Rect(0, 0, imagI.cols & -2, imagI.rows & -2));
 
-	    // rearrange the halves of Fourier image  so that the origin is at the image center
-
-	    //Mat tmp;                           // swap quadrants (Top-Left with Bottom-Right)
-
-	    //Mat leftHalf(magI, Rect(0, 0, magI.cols/2, magI.rows));
-	    //Mat rightHalf(magI, Rect(magI.cols/2, 0, magI.cols/2, magI.rows));
-
-	    //leftHalf.copyTo(tmp);
-	    //rightHalf.copyTo(leftHalf);
-	    //tmp.copyTo(rightHalf);
-
-	    //normalize(imagI, imagI, 0, 1, CV_MINMAX); // Transform the matrix with float values into a
-	                                            // viewable image form (float between values 0 and 1).
-	    //normalize(realI, realI, 0, 1, CV_MINMAX); // Transform the matrix with float values into a
-	                                            // viewable image form (float between values 0 and 1).
+	    if (verboseOutput) std::cout << "Display data\n" ;
 
 	    imshow("Input Image"       , image   );    // Show the result
 	    //imshow("spectrum (real)", realI);
