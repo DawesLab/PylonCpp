@@ -216,7 +216,6 @@ int main(int ac, char* av[])
 
     // Take input commands
     int numShots = 10;
-
     std::cout << "Enter the number of shots to collect: ";
     std::cin >> numShots;
 
