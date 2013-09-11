@@ -21,11 +21,11 @@ class Example(wx.Frame):
         pnl2 = wx.Panel(self)
 
         slider1 = wx.Slider(pnl2, value=18, minValue=0, maxValue=1000)
-        pause = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('pause.png'))
-        play = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('play.png'))
-        forw = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('fwd.png'))
-        back = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('back.png'))
-        vol = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('track.png'))
+        pause = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('media-playback-pause.png'))
+        play = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('media-playback-start.png'))
+        forw = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('media-seek-forward.png'))
+        back = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('media-skip-backward.png'))
+        vol = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('media-skip-forward.png'))
         slider2 = wx.Slider(pnl2, value=1, minValue=0, maxValue=100, size=(120, -1))
 
         vbox = wx.BoxSizer(wx.VERTICAL)
