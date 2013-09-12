@@ -58,8 +58,10 @@ Mat CollectShot(PicamHandle camera, PicamAvailableData data, PicamAcquisitionErr
     return image;
 }
 
-void InitializeCamera (PicamHandle camera, PicamCameraID id, PicamAvailableData data, PicamAcquisitionErrorsMask errors, bool verboseOutput)
+PicamHandle InitializeCamera (PicamCameraID id, PicamAvailableData data, PicamAcquisitionErrorsMask errors, bool verboseOutput)
 {
+	PicamHandle camera;
+
 	if (verboseOutput) 
     	std::cout << "Initializing PIcam library\n";
     
@@ -87,6 +89,7 @@ void InitializeCamera (PicamHandle camera, PicamCameraID id, PicamAvailableData 
     printf( " (SN:%s) [%s]\n", id.serial_number, id.sensor_name );
     Picam_DestroyString( string );
 
+    return camera;
 }
 
 void ConfigureCamera (PicamHandle camera, bool verboseOutput)
@@ -199,7 +202,7 @@ int main(int ac, char* av[])
     PicamAvailableData data;
     PicamAcquisitionErrorsMask errors;
 	
-	InitializeCamera( camera, id, data, errors, verboseOutput);
+	camera = InitializeCamera(id, data, errors, verboseOutput);
 
     ConfigureCamera( camera, verboseOutput );
 
