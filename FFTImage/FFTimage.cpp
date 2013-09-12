@@ -151,7 +151,7 @@ void ConfigureCamera (PicamHandle camera, bool verboseOutput)
 
 int main(int ac, char* av[])
 {
-	// Declare the supported options.
+	// Declare the supported command-line options.
 	po::options_description desc("Allowed options");
 	desc.add_options()
 	    ("help", "produce help message")
@@ -167,7 +167,7 @@ int main(int ac, char* av[])
 	    return 1;
 	}
 
-
+	// Choose verbosity
 	bool verboseOutput = false;
 	if (vm.count("verbose")) {
 	    std::cout << "Verbose output.\n";
@@ -176,6 +176,7 @@ int main(int ac, char* av[])
 	    std::cout << "Quiet output.\n";
 	}
 
+    // Refactor from here AA
     if (verboseOutput) 
     	std::cout << "Initializing PIcam library\n";
     
@@ -188,7 +189,7 @@ int main(int ac, char* av[])
     PicamAvailableData data;
     PicamAcquisitionErrorsMask errors;
 
-    piint readoutstride = 0;
+
     if (verboseOutput) 
     	std::cout << "Opening camera...\n";
 
@@ -206,12 +207,12 @@ int main(int ac, char* av[])
 
     if (verboseOutput)
     	std::cout << "Configuring camera...\n";
-    
+    // to here AA
+
     ConfigureCamera( camera, verboseOutput );
 
+    piint readoutstride = 0;
     Picam_GetParameterIntegerValue( camera, PicamParameter_ReadoutStride, &readoutstride );
-
-    printf( "\n\n" );
     
 
     // Take input commands
@@ -226,6 +227,7 @@ int main(int ac, char* av[])
 
     for (int i = 0; i < numShots; i++)
     {
+    	// Collect one shot:
     	Mat image = CollectShot(verboseOutput, camera, data, errors);
 
     	Mat padded;
@@ -258,7 +260,7 @@ int main(int ac, char* av[])
 	    imshow("Input Image"       , image   );    // Show the result
 	    //imshow("spectrum (real)", realI);
 	    if( waitKey(30) >= 0 ) break; // wait 30 ms for key interrupt
-	    if(i == 1){
+	    if(i == 0){
 	    	FileStorage fs("test.yml", FileStorage::WRITE); // This is an easy way, but uses space!
 
 	    	fs << "frame number" << i;
@@ -272,5 +274,5 @@ int main(int ac, char* av[])
 
 	Picam_CloseCamera( camera );
     Picam_UninitializeLibrary();
-    //TODO add file output of complex numbers from one element of FFT result. (command line flag)
+    //TODO add csv file output of complex numbers from one element of FFT result. (command line flag)
 }
