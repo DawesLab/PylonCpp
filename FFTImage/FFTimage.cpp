@@ -22,19 +22,6 @@ namespace po = boost::program_options;
 
 //TODO: put these Print functions into another file?
 
-void PrintData( pibyte* buf, piint numframes, piint framelength )
-{
-    pi16u  *midpt = NULL;
-    pibyte *frameptr = NULL;
-
-    for( piint loop = 0; loop < numframes; loop++ )
-    {
-        frameptr = buf + ( framelength * loop );
-        midpt = (pi16u*)frameptr + ( ( ( framelength/sizeof(pi16u) )/ 2 ) );
-        printf( "%5d,%5d,%5d\t%d\n", *(midpt-1), *(midpt), *(midpt+1), loop+1 );
-    }
-}
-
 void PrintEnumString( PicamEnumeratedType type, piint value )
 {
     const pichar* string;
@@ -56,7 +43,7 @@ void PrintError (PicamError error)
     }
 }
 
-Mat CollectShot(bool verboseOutput, PicamHandle camera, PicamAvailableData data, PicamAcquisitionErrorsMask errors)
+Mat CollectShot(PicamHandle camera, PicamAvailableData data, PicamAcquisitionErrorsMask errors, bool verboseOutput)
 {
 	if (verboseOutput) std::cout << "Collecting 1 frame\n\n";
     if( Picam_Acquire( camera, 1, NO_TIMEOUT, &data, &errors ) )
@@ -64,7 +51,6 @@ Mat CollectShot(bool verboseOutput, PicamHandle camera, PicamAvailableData data,
     else
     {
     	std::cout << "One frame collected\n";
-        //PrintData( (pibyte*)data.initial_readout, 1, readoutstride );
     }
     
     Mat image = Mat(400,1340, CV_16U, data.initial_readout).clone();
@@ -72,10 +58,42 @@ Mat CollectShot(bool verboseOutput, PicamHandle camera, PicamAvailableData data,
     return image;
 }
 
+void InitializeCamera (PicamHandle camera, PicamCameraID id, PicamAvailableData data, PicamAcquisitionErrorsMask errors, bool verboseOutput)
+{
+	if (verboseOutput) 
+    	std::cout << "Initializing PIcam library\n";
+    
+    Picam_InitializeLibrary();
+
+    // - open the first camera if any or create a demo camera
+
+
+
+    if (verboseOutput) 
+    	std::cout << "Opening camera...\n";
+
+    const pichar* string;
+
+    if( Picam_OpenFirstCamera( &camera ) == PicamError_None )
+        Picam_GetCameraID( camera, &id );
+    else
+    {
+    	printf( "Cannot load camera\n");
+        // return(1);
+        // TODO handle this the right way
+    }
+    Picam_GetEnumerationString( PicamEnumeratedType_Model, id.model, &string );
+    printf( "%s", string );
+    printf( " (SN:%s) [%s]\n", id.serial_number, id.sensor_name );
+    Picam_DestroyString( string );
+
+}
 
 void ConfigureCamera (PicamHandle camera, bool verboseOutput)
 {
+
     if (verboseOutput)
+    	std::cout << "Configuring camera...\n";
     	std::cout << "Set ADC rate to 4 MHz: ";
     
     PicamError error;
@@ -176,38 +194,12 @@ int main(int ac, char* av[])
 	    std::cout << "Quiet output.\n";
 	}
 
-    // Refactor from here AA
-    if (verboseOutput) 
-    	std::cout << "Initializing PIcam library\n";
-    
-    Picam_InitializeLibrary();
-
-    // - open the first camera if any or create a demo camera
     PicamHandle camera;
     PicamCameraID id;
-    const pichar* string;
     PicamAvailableData data;
     PicamAcquisitionErrorsMask errors;
-
-
-    if (verboseOutput) 
-    	std::cout << "Opening camera...\n";
-
-    if( Picam_OpenFirstCamera( &camera ) == PicamError_None )
-        Picam_GetCameraID( camera, &id );
-    else
-    {
-    	printf( "Cannot load camera\n");
-        return(1);
-    }
-    Picam_GetEnumerationString( PicamEnumeratedType_Model, id.model, &string );
-    printf( "%s", string );
-    printf( " (SN:%s) [%s]\n", id.serial_number, id.sensor_name );
-    Picam_DestroyString( string );
-
-    if (verboseOutput)
-    	std::cout << "Configuring camera...\n";
-    // to here AA
+	
+	InitializeCamera( camera, id, data, errors, verboseOutput);
 
     ConfigureCamera( camera, verboseOutput );
 
@@ -228,7 +220,7 @@ int main(int ac, char* av[])
     for (int i = 0; i < numShots; i++)
     {
     	// Collect one shot:
-    	Mat image = CollectShot(verboseOutput, camera, data, errors);
+    	Mat image = CollectShot(camera, data, errors, verboseOutput);
 
     	Mat padded;
 	    int m = getOptimalDFTSize( image.rows );
