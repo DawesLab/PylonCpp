@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import wx
@@ -21,11 +21,11 @@ class Example(wx.Frame):
         pnl2 = wx.Panel(self)
 
         slider1 = wx.Slider(pnl2, value=18, minValue=0, maxValue=1000)
-        pause = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('pause.png'))
-        play = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('play.png'))
-        forw = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('fwd.png'))
-        back = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('back.png'))
-        vol = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('track.png'))
+        pause = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('/usr/share/icons/Tango/scalable/actions/player_pause.svg'))
+        play = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('/usr/share/icons/Tango/scalable/actions/player_play.png'))
+        forw = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('/usr/share/icons/Tango/scalable/actions/player_fwd.png'))
+        back = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('/usr/share/icons/Tango/scalable/actions/player_end.png'))
+        vol = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('/usr/share/icons/Tango/scalable/actions/player_stop.png'))
         slider2 = wx.Slider(pnl2, value=1, minValue=0, maxValue=100, size=(120, -1))
 
         vbox = wx.BoxSizer(wx.VERTICAL)
