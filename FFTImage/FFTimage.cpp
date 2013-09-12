@@ -206,10 +206,6 @@ int main(int ac, char* av[])
 
     ConfigureCamera( camera, verboseOutput );
 
-    piint readoutstride = 0;
-    Picam_GetParameterIntegerValue( camera, PicamParameter_ReadoutStride, &readoutstride );
-    
-
     // Take input commands
     int numShots = 10;
     std::cout << "Enter the number of shots to collect: ";
