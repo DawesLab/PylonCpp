@@ -188,6 +188,7 @@ int main(int ac, char* av[])
     PicamAvailableData data;
     PicamAcquisitionErrorsMask errors;
 
+    // Can remove this variable, we don't use readoutstride anymore
     piint readoutstride = 0;
     if (verboseOutput) 
     	std::cout << "Opening camera...\n";
@@ -209,6 +210,7 @@ int main(int ac, char* av[])
     
     ConfigureCamera( camera, verboseOutput );
 
+    // Can remove this next call, we don't use readoutstride anymore.
     Picam_GetParameterIntegerValue( camera, PicamParameter_ReadoutStride, &readoutstride );
 
     printf( "\n\n" );
