@@ -5,7 +5,6 @@
 //through 5 times.
 
 // TODO: add command line flags to specify saving full FFT or an ROI
-// Testing github push
 
 #define NUM_FRAMES  5
 #define NO_TIMEOUT  -1
