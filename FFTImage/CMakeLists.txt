@@ -8,7 +8,7 @@ find_package( Boost 1.40 COMPONENTS program_options REQUIRED)
 
 add_executable( FFTimage FFTimage.cpp )
 
-include_directories( FFTimage ${Boost_INCLUDE_DIRS} )
+include_directories( ${Boost_INCLUDE_DIRS} )
 target_link_libraries( FFTimage ${Boost_LIBRARIES} )
 target_link_libraries( FFTimage ${OpenCV_LIBRARIES} )
 target_link_libraries( FFTimage picam )

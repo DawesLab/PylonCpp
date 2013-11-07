@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import wx
@@ -21,11 +21,19 @@ class Example(wx.Frame):
         pnl2 = wx.Panel(self)
 
         slider1 = wx.Slider(pnl2, value=18, minValue=0, maxValue=1000)
+<<<<<<< HEAD
+        pause = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('/usr/share/icons/Tango/scalable/actions/player_pause.svg'))
+        play = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('/usr/share/icons/Tango/scalable/actions/player_play.png'))
+        forw = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('/usr/share/icons/Tango/scalable/actions/player_fwd.png'))
+        back = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('/usr/share/icons/Tango/scalable/actions/player_end.png'))
+        vol = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('/usr/share/icons/Tango/scalable/actions/player_stop.png'))
+=======
         pause = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('media-playback-pause.png'))
         play = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('media-playback-start.png'))
         forw = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('media-seek-forward.png'))
         back = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('media-skip-backward.png'))
         vol = wx.BitmapButton(pnl2, bitmap=wx.Bitmap('media-skip-forward.png'))
+>>>>>>> 6789b16d9157e6d8cf7701d1410a5c7fd8e0b2ac
         slider2 = wx.Slider(pnl2, value=1, minValue=0, maxValue=100, size=(120, -1))
 
         vbox = wx.BoxSizer(wx.VERTICAL)
