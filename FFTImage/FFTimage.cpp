@@ -106,17 +106,17 @@ void ConfigureCamera (PicamHandle camera, bool verboseOutput)
                 4.0 );
     PrintError( error );
 
-    if (verboseOutput)
-    	std::cout << "Set exposure to triggered: ";
+    // if (verboseOutput)
+    // 	std::cout << "Set exposure to triggered: ";
 
-    PicamTriggerResponse TriggerResponse =  PicamTriggerResponse_ExposeDuringTriggerPulse; 
+    // PicamTriggerResponse TriggerResponse =  PicamTriggerResponse_ExposeDuringTriggerPulse; 
     PicamTriggerDetermination TriggerDetermination = PicamTriggerDetermination_RisingEdge;
 
-    error = Picam_SetParameterIntegerValue(
-    			camera,
-    			PicamParameter_TriggerResponse,
-    			TriggerResponse );
-    PrintError( error );
+    // error = Picam_SetParameterIntegerValue(
+    // 			camera,
+    // 			PicamParameter_TriggerResponse,
+    // 			TriggerResponse );
+    // PrintError( error );
 
     if (verboseOutput)
     	std::cout << "Set trigger determination: ";
@@ -250,7 +250,8 @@ int main(int ac, char* av[])
 
 	    imshow("Input Image"       , image   );    // Show the result
 	    //imshow("spectrum (real)", realI);
-	    if( waitKey(30) >= 0 ) break; // wait 30 ms for key interrupt
+	    waitKey();
+	    // if( waitKey(30) >= 0 ) break; // wait 30 ms for key interrupt
 	    if(i == 0){
 	    	FileStorage fs("test.yml", FileStorage::WRITE); // This is an easy way, but uses space!
 
