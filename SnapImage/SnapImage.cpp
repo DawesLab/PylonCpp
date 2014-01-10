@@ -168,6 +168,23 @@ int main()
     
     waitKey(0);
 
+    //collect two frames
+    printf( "\n\n" );
+    printf( "Collecting 2 frames\n\n" );
+    if( Picam_Acquire( camera, 2, NO_TIMEOUT, &data, &errors ) )
+        printf( "Error: Camera only collected %d frames\n", (piint)data.readout_count );
+    else
+    {
+        PrintData( (pibyte*)data.initial_readout, 1, readoutstride );
+    }
+    
+    Mat image = Mat(400,1340, CV_16U, data.initial_readout).clone();
+    
+    printf( "Display data\n" );
+
+    namedWindow( "DisplayImage", CV_WINDOW_AUTOSIZE );
+    imshow( "DisplayImage", image );
+
     Picam_CloseCamera( camera );
     Picam_UninitializeLibrary();
 }
