@@ -58,7 +58,27 @@ void ConfigureCamera (PicamHandle camera)
                 camera,
                 PicamParameter_AdcSpeed,
                 4.0 );
-    PrintError( error );    
+    PrintError( error );
+
+    error = Picam_SetParameterFloatingPointValue(
+                camera,
+                PicamParameter_SensorTemperatureSetpoint,
+                -120 );
+    PrintError ( error );
+
+    error = Picam_SetParameterIntegerValue(
+                camera,
+                PicamParameter_TriggerResponse,
+                PicamTriggerResponse_ExposeDuringTriggerPulse );
+    PrintError ( error );
+
+    error = Picam_SetParameterIntegerValue(
+                camera,
+                PicamParameter_ShutterTimingMode,
+                PicamShutterTimingMode_AlwaysOpen );
+    PrintError ( error );
+
+
     
     pibln committed;
     Picam_AreParametersCommitted( camera, &committed );
