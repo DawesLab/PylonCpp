@@ -62,7 +62,7 @@ void ConfigureCamera (PicamHandle camera)
 
     error = Picam_SetParameterFloatingPointValue(
                 camera,
-                PicamParameter_SensorTemperatureSetpoint,
+                PicamParameter_SensorTemperatureSetPoint,
                 -120 );
     PrintError ( error );
 
