@@ -52,7 +52,7 @@ void PrintError (PicamError error)
 void ConfigureCamera (PicamHandle camera)
 {
     std::cout << "Set ADC rate to 4 MHz: ";
-    
+
     PicamError error;
     error = Picam_SetParameterFloatingPointValue(
                 camera,
@@ -79,7 +79,7 @@ void ConfigureCamera (PicamHandle camera)
     PrintError ( error );
 
 
-    
+
     pibln committed;
     Picam_AreParametersCommitted( camera, &committed );
     if( committed )
@@ -91,7 +91,7 @@ void ConfigureCamera (PicamHandle camera)
     std::cout << "Commit to hardware: ";
     const PicamParameter* failed_parameters;
     piint failed_parameters_count;
-    error = 
+    error =
         Picam_CommitParameters(
             camera,
             &failed_parameters,
@@ -158,14 +158,14 @@ int main()
     {
         PrintData( (pibyte*)data.initial_readout, 1, readoutstride );
     }
-    
+
     Mat image = Mat(400,1340, CV_16U, data.initial_readout).clone();
-    
+
     printf( "Display data\n" );
 
     namedWindow( "DisplayImage", CV_WINDOW_AUTOSIZE );
     imshow( "DisplayImage", image );
-    
+
     waitKey(0);
 
     //collect two frames
@@ -177,13 +177,13 @@ int main()
     {
         PrintData( (pibyte*)data.initial_readout, 1, readoutstride );
     }
-    
-    Mat image = Mat(400,1340, CV_16U, data.initial_readout).clone();
-    
+
+    Mat image2 = Mat(400,1340, CV_16U, data.initial_readout).clone();
+
     printf( "Display data\n" );
 
     namedWindow( "DisplayImage", CV_WINDOW_AUTOSIZE );
-    imshow( "DisplayImage", image );
+    imshow( "DisplayImage", image2 );
 
     Picam_CloseCamera( camera );
     Picam_UninitializeLibrary();
